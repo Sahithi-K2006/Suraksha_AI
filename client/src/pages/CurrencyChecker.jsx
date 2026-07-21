@@ -61,7 +61,7 @@ export default function CurrencyChecker() {
         await videoRef.current.play();
       }
       setCameraActive(true);
-    } catch (err) {
+    } catch {
       toast('Could not access camera. Check browser permissions.', 'error');
     }
   };

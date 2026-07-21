@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MessageSquareWarning, ExternalLink, RotateCcw } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from '../components/ui/Card';
+import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import ReasoningTrace from '../components/ReasoningTrace';
 import VerdictBadge from '../components/VerdictBadge';

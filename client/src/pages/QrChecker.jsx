@@ -94,7 +94,7 @@ export default function QrChecker() {
       setCameraActive(true);
       setScanning(true);
       rafRef.current = requestAnimationFrame(scanLoop);
-    } catch (err) {
+    } catch {
       toast('Could not access camera. Check browser permissions.', 'error');
     }
   };
