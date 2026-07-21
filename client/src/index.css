@@ -21,14 +21,23 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-app-bg);
   color: #0f172a;
+  background-color: var(--color-app-bg);
+  background-image:
+    radial-gradient(60rem 30rem at 8% -10%, rgba(30, 58, 138, 0.07), transparent 60%),
+    radial-gradient(50rem 26rem at 100% 0%, rgba(249, 115, 22, 0.06), transparent 55%),
+    radial-gradient(40rem 24rem at 50% 110%, rgba(16, 185, 129, 0.05), transparent 60%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-heading);
 }
 
+* {
+  scrollbar-color: #cbd5e1 transparent;
+}
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -37,6 +46,13 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background-color: #cbd5e1;
   border-radius: 9999px;
 }
+::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+::selection {
+  background-color: rgba(30, 58, 138, 0.18);
+}
 
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(8px); }
@@ -44,6 +60,42 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 .animate-fade-in-up {
   animation: fade-in-up 0.35s ease-out both;
+}
+
+@keyframes soft-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-soft-float {
+  animation: soft-float 6s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0% { transform: translateY(-100%); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+.animate-scan-sweep {
+  animation: scan-sweep 2.2s ease-in-out infinite;
+}
+
+/* Reusable premium surface treatments - purely presentational utility classes */
+.surface-card {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glow-ring-blue {
+  box-shadow: 0 0 0 1px rgba(30, 58, 138, 0.08), 0 12px 30px -12px rgba(30, 58, 138, 0.25);
+}
+
+.text-gradient-brand {
+  background: linear-gradient(90deg, #1E3A8A, #2E4FA8 55%, #F97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .leaflet-container {

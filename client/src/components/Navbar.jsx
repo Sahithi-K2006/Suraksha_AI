@@ -17,10 +17,12 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-slate-200">
+    <header className="sticky top-0 z-50 surface-card border-b border-slate-200/70 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <NavLink to="/" className="flex items-center gap-2 font-heading font-bold text-trust-blue text-lg">
-          <ShieldCheck className="w-6 h-6 text-safety-orange" />
+        <NavLink to="/" className="flex items-center gap-2.5 font-heading font-bold text-trust-blue text-lg">
+          <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-trust-blue to-trust-blue-light shadow-md shadow-trust-blue/30">
+            <ShieldCheck className="w-5 h-5 text-white" />
+          </span>
           SuRaksha<span className="text-safety-orange">AI</span>
         </NavLink>
 
@@ -32,8 +34,8 @@ export default function Navbar() {
               end={end}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                  isActive ? 'bg-trust-blue text-white' : 'text-slate-600 hover:bg-slate-100',
+                  'flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200',
+                  isActive ? 'bg-trust-blue text-white shadow-sm shadow-trust-blue/30' : 'text-slate-600 hover:bg-slate-100',
                 )
               }
             >
@@ -52,7 +54,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <nav className="md:hidden border-t border-slate-200 px-4 py-2 flex flex-col gap-1">
+        <nav className="md:hidden border-t border-slate-200/70 px-4 py-2 flex flex-col gap-1">
           {LINKS.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
