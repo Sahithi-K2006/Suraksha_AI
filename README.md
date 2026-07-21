@@ -1,3 +1,11 @@
+## 📖 Overview
+
+Suraksha AI is a unified fraud detection platform that helps users identify common digital fraud scenarios, including scam messages, counterfeit currency, malicious QR codes, and suspicious payment links. Instead of providing only a prediction, the application explains every decision through an explainable reasoning engine, allowing users to understand why an input is classified as safe or suspicious.
+
+The platform combines multiple fraud detection modules into a single interface and produces a unified fraud risk score based on the analysis results. It also includes multilingual voice interaction, similar case matching, an investigation dashboard, cybercrime complaint generation, PDF reporting, and real-time analytics to support both everyday users and investigators.
+
+Built as a hackathon prototype, Suraksha AI focuses on transparency, accessibility, and practical fraud awareness by bringing multiple verification tools together in a single application rather than requiring users to rely on separate solutions.
+
 # 🎯 Hackathon Objectives
 
 Suraksha AI was developed as a hackathon prototype with the goal of building a single platform capable of detecting multiple forms of digital fraud while providing transparent, explainable results.
