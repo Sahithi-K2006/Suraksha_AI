@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { ShieldCheck, MessageSquareWarning, Banknote, QrCode, Bot, LayoutDashboard, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../lib/cn';
+import LanguageSelector from './LanguageSelector';
 
 const LINKS = [
   { to: '/', label: 'Home', icon: ShieldCheck, end: true },
@@ -42,9 +43,12 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <button className="md:hidden text-slate-700" onClick={() => setOpen((o) => !o)} aria-label="Toggle menu">
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSelector compact />
+          <button className="md:hidden text-slate-700" onClick={() => setOpen((o) => !o)} aria-label="Toggle menu">
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {open && (

@@ -1,9 +1,12 @@
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UploadCloud, ImagePlus, Loader2, Sparkles } from 'lucide-react';
+import { UploadCloud, ImagePlus, Loader2, Sparkles, Languages } from 'lucide-react';
 import { cn } from '../lib/cn';
 import { setHandoff } from '../lib/handoff';
 import { decodeQrFromFile } from '../lib/qrDecode';
+import VoiceInputButton from './VoiceInputButton';
+import { useLanguage } from '../lib/useLanguage';
+import { getLanguage, t } from '../lib/i18n';
 
 const LINK_PATTERN = /^(https?:\/\/|upi:\/\/)/i;
 
@@ -14,6 +17,7 @@ export default function AutoDetectDropZone() {
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const lang = useLanguage();
 
   const handleFile = useCallback(async (file) => {
     if (!file.type.startsWith('image/')) {
@@ -62,8 +66,8 @@ export default function AutoDetectDropZone() {
     }
   }, [handleFile]);
 
-  const handleAnalyzeText = useCallback(() => {
-    const trimmed = text.trim();
+  const handleAnalyzeText = useCallback((override) => {
+    const trimmed = (override ?? text).trim();
     if (!trimmed) return;
 
     if (LINK_PATTERN.test(trimmed)) {
@@ -74,6 +78,12 @@ export default function AutoDetectDropZone() {
       navigate('/message-checker');
     }
   }, [text, navigate]);
+
+  const handleVoiceResult = useCallback((transcript, isFinal) => {
+    if (!isFinal) return;
+    setText(transcript);
+    handleAnalyzeText(transcript);
+  }, [handleAnalyzeText]);
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -94,11 +104,10 @@ export default function AutoDetectDropZone() {
             <UploadCloud className="w-8 h-8 text-trust-blue mb-3" />
           )}
           <div className="font-heading font-semibold text-slate-900 mb-1">
-            {busy ? 'Detecting what this is...' : 'Universal Auto-Detect Drop Zone'}
+            {busy ? t(lang, 'detecting') : t(lang, 'dropZoneTitle')}
           </div>
           <p className="text-sm text-slate-500 max-w-md">
-            Drop or paste a currency photo, a QR code image, or paste a message / payment link.
-            We'll auto-detect the type and route it to the right checker.
+            {t(lang, 'dropZoneDesc')}
           </p>
         </div>
 
@@ -106,7 +115,7 @@ export default function AutoDetectDropZone() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           onPaste={handlePaste}
-          placeholder="Paste a suspicious message, UPI link, or website URL here..."
+          placeholder={t(lang, 'dropZonePlaceholder')}
           rows={3}
           className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue/40 focus:border-trust-blue resize-none mb-3"
         />
@@ -115,12 +124,12 @@ export default function AutoDetectDropZone() {
 
         <div className="flex flex-wrap items-center gap-3">
           <button
-            onClick={handleAnalyzeText}
+            onClick={() => handleAnalyzeText()}
             disabled={!text.trim() || busy}
             className="inline-flex items-center gap-2 bg-trust-blue text-white px-5 py-2.5 rounded-lg font-medium hover:bg-trust-blue-light transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Sparkles className="w-4 h-4" />
-            Auto-Detect &amp; Analyze
+            {t(lang, 'autoDetectAnalyze')}
           </button>
 
           <button
@@ -129,8 +138,10 @@ export default function AutoDetectDropZone() {
             className="inline-flex items-center gap-2 border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg font-medium hover:bg-slate-50 transition-colors disabled:opacity-40"
           >
             <ImagePlus className="w-4 h-4" />
-            Upload Image
+            {t(lang, 'uploadImage')}
           </button>
+
+          <VoiceInputButton lang={lang} onResult={handleVoiceResult} />
 
           <input
             ref={fileInputRef}
@@ -143,6 +154,9 @@ export default function AutoDetectDropZone() {
               e.target.value = '';
             }}
           />
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-3">
+          <Languages className="w-3.5 h-3.5" /> Mic listens in {getLanguage(lang).nativeName} - change language from the navbar.
         </div>
       </div>
     </div>

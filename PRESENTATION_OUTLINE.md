@@ -55,6 +55,19 @@ is, analyzes it, and shows its work.
 
 ---
 
+## Slide 5b — Differentiator: Multilingual Voice Agent
+
+- Speak in English, Hindi, Telugu, or Tamil — live mic or a dropped voice recording — and get
+  the same explainable scam analysis, then have the verdict read back out loud.
+- Built for the citizen who's more comfortable talking than typing, or doesn't read English —
+  this is the accessibility differentiator, not just a convenience feature.
+- Curated multilingual keyword rules mean detection works with **zero API key**; an optional
+  LLM cross-check adds real translation-aware reasoning when a key is configured.
+- *Demo beat: switch the language selector to Hindi, speak a scam phrase into the mic, and
+  show the verdict + read-aloud in Hindi.*
+
+---
+
 ## Slide 6 — Differentiator #3: Similar Cases + Fraud Risk Fusion
 
 - Every result is matched against existing case data via keyword + region similarity —
@@ -111,6 +124,7 @@ is, analyzes it, and shows its work.
 | Explainability | Reasoning Trace animation + ELI5/Technical toggle on every verdict, rules-based engine by design |
 | Technical execution | Full-stack, real image/QR/text analysis, live camera capture, working PDF/CSV export, live stress test |
 | Real-world impact | Citizen-facing (verify before you act) *and* investigator-facing (dashboard, patterns, complaint drafts) |
+| Accessibility / inclusivity | Multilingual voice in + voice out (English/Hindi/Telugu/Tamil) reaches citizens who don't read English or prefer speaking |
 | Scalability | Live demo of 500-case burst insert with smooth UI updates |
 
 ---

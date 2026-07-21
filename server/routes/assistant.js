@@ -14,9 +14,9 @@ router.get('/history/:sessionId', (req, res) => {
   res.json({ messages: rows });
 });
 
-// POST /api/assistant/chat  { sessionId, message }
+// POST /api/assistant/chat  { sessionId, message, lang }
 router.post('/chat', async (req, res) => {
-  const { sessionId, message } = req.body || {};
+  const { sessionId, message, lang = 'en' } = req.body || {};
   if (!sessionId || !message || !message.trim()) {
     return res.status(400).json({ error: 'sessionId and message are required' });
   }
@@ -26,7 +26,7 @@ router.post('/chat', async (req, res) => {
   insertMsg.run(sessionId, 'user', message);
 
   try {
-    const { reply, source } = await assistantEngine.getReply(history, message);
+    const { reply, source } = await assistantEngine.getReply(history, message, lang);
     insertMsg.run(sessionId, 'assistant', reply);
     res.json({ reply, source });
   } catch (err) {

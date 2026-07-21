@@ -1,29 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bot, Send, User, Mic, MicOff } from 'lucide-react';
+import { Bot, Send, User } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import VoiceInputButton from '../components/VoiceInputButton';
+import ReadAloudButton from '../components/ReadAloudButton';
 import { api } from '../lib/api';
 import { getAssistantSessionId } from '../lib/sessionStore';
 import { useToast } from '../components/ui/Toast';
-
-const WELCOME = {
-  role: 'assistant',
-  content: "Hi, I'm SuRakshaAI's Citizen Assistant. Paste a suspicious message, ask about a currency note or QR code, or ask how to report fraud - I'm here to help.",
-};
+import { useLanguage } from '../lib/useLanguage';
+import { t, getLanguage } from '../lib/i18n';
 
 export default function Assistant() {
-  const [messages, setMessages] = useState([WELCOME]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
-  const [listening, setListening] = useState(false);
   const sessionId = useRef(getAssistantSessionId());
   const bottomRef = useRef(null);
-  const recognitionRef = useRef(null);
+  const lang = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
     api.assistantHistory(sessionId.current).then((data) => {
-      if (data.messages?.length) setMessages([WELCOME, ...data.messages]);
+      if (data.messages?.length) setMessages(data.messages);
     }).catch(() => {});
   }, []);
 
@@ -38,37 +36,13 @@ export default function Assistant() {
     setInput('');
     setSending(true);
     try {
-      const { reply } = await api.assistantChat(sessionId.current, text);
+      const { reply } = await api.assistantChat(sessionId.current, text, lang);
       setMessages((m) => [...m, { role: 'assistant', content: reply }]);
     } catch (err) {
       toast(err.message || 'Assistant is unavailable right now', 'error');
     } finally {
       setSending(false);
     }
-  };
-
-  const toggleVoice = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      toast('Voice input is not supported in this browser.', 'error');
-      return;
-    }
-    if (listening) {
-      recognitionRef.current?.stop();
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-IN';
-    recognition.interimResults = false;
-    recognition.onresult = (e) => {
-      const transcript = e.results[0][0].transcript;
-      setInput(transcript);
-    };
-    recognition.onend = () => setListening(false);
-    recognition.onerror = () => setListening(false);
-    recognitionRef.current = recognition;
-    recognition.start();
-    setListening(true);
   };
 
   return (
@@ -81,47 +55,55 @@ export default function Assistant() {
 
       <Card className="flex-1 flex flex-col p-0 overflow-hidden">
         <div className="flex-1 overflow-y-auto p-5 space-y-4" style={{ maxHeight: '55vh' }}>
+          <ChatBubble role="assistant" content={t(lang, 'assistantWelcome')} lang={lang} />
           {messages.map((m, idx) => (
-            <div key={idx} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.role === 'user' ? 'bg-trust-blue text-white' : 'bg-safety-orange/10 text-safety-orange'}`}>
-                {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-              </div>
-              <div className={`rounded-xl px-4 py-2.5 text-sm max-w-[80%] whitespace-pre-wrap ${m.role === 'user' ? 'bg-trust-blue text-white' : 'bg-slate-100 text-slate-800'}`}>
-                {m.content}
-              </div>
-            </div>
+            <ChatBubble key={idx} role={m.role} content={m.content} lang={lang} />
           ))}
           {sending && (
             <div className="flex gap-3">
               <div className="w-8 h-8 rounded-full bg-safety-orange/10 text-safety-orange flex items-center justify-center shrink-0">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="rounded-xl px-4 py-2.5 text-sm bg-slate-100 text-slate-400">Thinking...</div>
+              <div className="rounded-xl px-4 py-2.5 text-sm bg-slate-100 text-slate-400">{t(lang, 'analyzing')}</div>
             </div>
           )}
           <div ref={bottomRef} />
         </div>
 
         <div className="border-t border-slate-200 p-4 flex items-center gap-2">
-          <button
-            onClick={toggleVoice}
-            className={`p-2.5 rounded-lg border transition-colors ${listening ? 'bg-risk-red text-white border-risk-red' : 'border-slate-300 text-slate-500 hover:bg-slate-50'}`}
-            title="Voice input"
-          >
-            {listening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-          </button>
+          <VoiceInputButton lang={lang} onResult={(transcript, isFinal) => isFinal && setInput(transcript)} />
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && send()}
-            placeholder="Ask about a message, currency note, or QR code..."
+            placeholder={t(lang, 'assistantPlaceholder')}
             className="flex-1 rounded-lg border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-trust-blue/40 focus:border-trust-blue"
           />
           <Button onClick={() => send()} disabled={!input.trim() || sending}>
             <Send className="w-4 h-4" />
           </Button>
         </div>
+        <div className="px-4 pb-3 text-xs text-slate-400">
+          Speaking &amp; replies in {getLanguage(lang).nativeName} - change language from the navbar.
+        </div>
       </Card>
+    </div>
+  );
+}
+
+function ChatBubble({ role, content, lang }) {
+  const isUser = role === 'user';
+  return (
+    <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isUser ? 'bg-trust-blue text-white' : 'bg-safety-orange/10 text-safety-orange'}`}>
+        {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+      </div>
+      <div className={`flex flex-col gap-1.5 max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
+        <div className={`rounded-xl px-4 py-2.5 text-sm whitespace-pre-wrap ${isUser ? 'bg-trust-blue text-white' : 'bg-slate-100 text-slate-800'}`}>
+          {content}
+        </div>
+        {!isUser && <ReadAloudButton text={content} lang={lang} className="text-xs" />}
+      </div>
     </div>
   );
 }

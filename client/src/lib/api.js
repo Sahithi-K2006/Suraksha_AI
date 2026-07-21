@@ -7,7 +7,7 @@ async function request(path, options = {}) {
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new Error(body.error || `Request failed: ${res.status}`);
+    throw new Error(body.message || body.error || `Request failed: ${res.status}`);
   }
   return res.json();
 }
@@ -41,9 +41,15 @@ export const api = {
 
   stressTest: (count = 500) => request('/stress-test', { method: 'POST', body: JSON.stringify({ count }) }),
 
-  assistantChat: (sessionId, message) => request('/assistant/chat', { method: 'POST', body: JSON.stringify({ sessionId, message }) }),
+  assistantChat: (sessionId, message, lang = 'en') => request('/assistant/chat', { method: 'POST', body: JSON.stringify({ sessionId, message, lang }) }),
 
   assistantHistory: (sessionId) => request(`/assistant/history/${sessionId}`),
+
+  transcribeAudio: (blob, filename = 'recording.webm') => {
+    const form = new FormData();
+    form.append('audio', blob, filename);
+    return request('/transcribe', { method: 'POST', body: form });
+  },
 };
 
 export default api;

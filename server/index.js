@@ -13,6 +13,7 @@ import casesRoutes from './routes/cases.js';
 import assistantRoutes from './routes/assistant.js';
 import riskRoutes from './routes/risk.js';
 import stressRoutes from './routes/stress.js';
+import transcribeRoutes from './routes/transcribe.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -27,11 +28,13 @@ app.use('/api/cases', casesRoutes);
 app.use('/api/assistant', assistantRoutes);
 app.use('/api/risk', riskRoutes);
 app.use('/api/stress-test', stressRoutes);
+app.use('/api/transcribe', transcribeRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
     llmConfigured: Boolean(process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY),
+    audioTranscriptionConfigured: Boolean(process.env.OPENAI_API_KEY),
   });
 });
 

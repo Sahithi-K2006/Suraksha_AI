@@ -5,6 +5,8 @@ import scamTextScorer from '../lib/scamTextScorer.js';
 import currencyAnalyzer from '../lib/currencyAnalyzer.js';
 import linkAnalyzer from '../lib/linkAnalyzer.js';
 import similarCases from '../lib/similarCases.js';
+import llmScamAnalyzer from '../lib/llmScamAnalyzer.js';
+import riskEngine from '../lib/riskEngine.js';
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
@@ -29,13 +31,43 @@ function saveCase({ type, input_summary, verdict, risk_score, explanation, latit
 }
 
 // POST /api/analyze/text
-router.post('/text', (req, res) => {
+router.post('/text', async (req, res) => {
   const { text, latitude, longitude, region, save = true } = req.body || {};
   if (!text || typeof text !== 'string' || !text.trim()) {
     return res.status(400).json({ error: 'text is required' });
   }
 
   const result = scamTextScorer.analyze(text);
+
+  // For non-English text (or a low-confidence heuristic read), try an
+  // optional LLM cross-check that can genuinely translate + reason about
+  // the message. This is a no-op (returns null fast) if no API key is set.
+  const worthLlmCheck = result.detectedLanguage !== 'en' || result.score < 20;
+  if (worthLlmCheck) {
+    const llmResult = await llmScamAnalyzer.analyzeWithLlm(text);
+    if (llmResult) {
+      const mergedScore = Math.max(result.score, llmResult.score);
+      result.score = mergedScore;
+      result.verdict = riskEngine.verdictFromScore(mergedScore);
+      result.translation = llmResult.translation;
+      if (llmResult.redFlags.length) {
+        result.trace.push({
+          step: 'Cross-checking with AI language model',
+          result: `translated & flagged: ${llmResult.redFlags.join(', ')}`,
+          hit: true,
+        });
+        result.explanation.push(`AI cross-check (translated): ${llmResult.redFlags.join(', ')}`);
+        result.redFlags = [...new Set([...result.redFlags, ...llmResult.redFlags])];
+      } else {
+        result.trace.push({
+          step: 'Cross-checking with AI language model',
+          result: 'translated - no additional red flags found',
+          hit: false,
+        });
+      }
+    }
+  }
+
   let caseRow = null;
   if (save) {
     caseRow = saveCase({

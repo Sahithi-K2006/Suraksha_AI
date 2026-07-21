@@ -1,7 +1,8 @@
-# SuRakshaAI — Live Demo Script (3–4 minutes)
+# SuRakshaAI — Live Demo Script (~4.5 minutes)
 
-Timed walkthrough. Practice this once end-to-end before presenting — the three highest-impact
-live-demo beats (camera scan, Reasoning Trace, Stress Test) are marked **★**.
+Timed walkthrough. Practice this once end-to-end before presenting — the four highest-impact
+live-demo beats (camera scan, Reasoning Trace, Multilingual Voice, Stress Test) are marked
+**★**. If you're tight on time, the Multilingual Voice beat (1:40–2:05) is the easiest to trim.
 
 Pre-demo setup: have `npm run dev` already running, home page loaded, dashboard password
 (`police123`) memorized, and a QR code (e.g. a UPI QR from any app, printed or on a second
@@ -59,10 +60,27 @@ Point at **Similar Cases**:
 
 ---
 
-### 1:40 – 2:15 | ★ Live camera scan (QR Checker)
+### 1:40 – 2:05 | ★ Multilingual Voice Agent
 
-Navigate to **QR Checker**, select **Live Scan**, click **Start Camera**, and hold up the
-prepared QR code.
+Switch the navbar **language selector** to हिन्दी. Go to the **Message Checker**, open the
+**Speak / Record** tab, and speak a short scam-style phrase out loud (e.g. "तुरंत अपना OTP
+साझा करें").
+
+> "This isn't just a translated UI — switch the language, and the mic, the analysis, and the
+> spoken result all follow. A citizen who's more comfortable speaking Hindi, Telugu, or Tamil
+> than typing English gets the exact same explainable verdict."
+
+Click **Listen** on the result:
+
+> "And it reads the verdict back out loud — built for someone who'd rather hear it than read
+> it."
+
+---
+
+### 2:05 – 2:40 | ★ Live camera scan (QR Checker)
+
+Switch language back to English. Navigate to **QR Checker**, select **Live Scan**, click
+**Start Camera**, and hold up the prepared QR code.
 
 > "Live camera QR scanning, decoded client-side — no server round-trip needed just to read
 > the code."
@@ -74,7 +92,7 @@ Let it auto-decode and show the verdict + reasoning trace for the QR/link result
 
 ---
 
-### 2:15 – 2:35 | Unified Risk Report
+### 2:40 – 3:00 | Unified Risk Report
 
 Click **View unified risk report**.
 
@@ -83,7 +101,7 @@ Click **View unified risk report**.
 
 ---
 
-### 2:35 – 3:15 | ★ Investigation Dashboard + Stress Test
+### 3:00 – 3:40 | ★ Investigation Dashboard + Stress Test
 
 Navigate to **Dashboard**, log in with `police123`.
 
@@ -101,7 +119,7 @@ As it completes (should take well under a second):
 
 ---
 
-### 3:15 – 3:45 | Case Detail + Complaint Generator
+### 3:40 – 4:10 | Case Detail + Complaint Generator
 
 Click into any case. Scroll to **Actions**.
 
@@ -115,11 +133,11 @@ Click **Generate PDF Report**.
 
 ---
 
-### 3:45 – 4:00 | Close
+### 4:10 – 4:25 | Close
 
-> "Scam messages, counterfeit currency, and payment fraud — one explainable engine, one
-> unified score, built for both the citizen checking before they act, and the investigator
-> watching the pattern. Thank you."
+> "Scam messages, counterfeit currency, and payment fraud, in four languages, spoken or typed
+> — one explainable engine, one unified score, built for both the citizen checking before they
+> act, and the investigator watching the pattern. Thank you."
 
 ---
 
@@ -127,8 +145,14 @@ Click **Generate PDF Report**.
 
 - **Camera permission denied / no camera available:** fall back to the **Upload QR Image**
   or **Paste Link** tab in the QR Checker — same reasoning trace, same result.
-- **LLM key not set:** the Citizen Assistant is expected to use its scripted fallback; don't
-  apologize for this, it's documented behavior — just don't claim it's calling a live LLM.
+- **Mic permission denied / browser doesn't support speech recognition:** fall back to typing
+  the Hindi/Telugu/Tamil phrase directly into the Message Checker's Type tab instead — the
+  multilingual heuristic detection works identically either way.
+- **LLM key not set:** the Citizen Assistant is expected to use its scripted fallback (still
+  fully translated per language); don't apologize for this, it's documented behavior — just
+  don't claim it's calling a live LLM.
+- **Uploading an audio recording fails:** expected without `OPENAI_API_KEY` — the UI will say
+  so and point to live recording instead; don't demo the upload path unless the key is set.
 - **Stress Test feels slow on a loaded machine:** it typically completes in well under a
   second; if the venue Wi-Fi/laptop is under load, narrate through it — the point is the UI
   handling 500 new rows without breaking, not raw speed.
