@@ -105,8 +105,6 @@ The completed prototype includes:
 
 Click the image below to watch the demo.
 
-[![Project Demo]
-
 https://github.com/user-attachments/assets/c4e0e10e-2c85-4b3e-8730-80a1b0b53370
 
 
