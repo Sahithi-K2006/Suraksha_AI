@@ -100,3 +100,10 @@ The completed prototype includes:
 - ✅ Cybercrime Complaint Generator
 - ✅ PDF Report Generation
 - ✅ Real-time Analytics
+
+## 🎥 Project Demo
+
+Click the image below to watch the demo.
+
+[![Project Demo](https://img.shields.io/badge/▶-Watch%20Demo-blue?style=for-the-badge)]([YOUR_VIDEO_LINK](https://github.com/Sahithi-K2006/Suraksha_AI/releases/download/Video/SurakshaAI.video.mp4))
+
